@@ -5,7 +5,7 @@ This file provides the app function which shows a sample output of the program a
 
 from typing import List, Union
 
-from .utils import prettifier
+from . import ex_prettifier as prettifier
 
 
 def run(argv: Union[List, None] = None) -> None:

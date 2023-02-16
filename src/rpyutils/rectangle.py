@@ -5,8 +5,7 @@ The rectangle class contains the height and width of a rectangle.
 It also provides methods to calculate the area and perimeter of the rectangle.
 """
 
-from .utils import calculator
-from .utils.custom_types import Number
+from . import rectangle_utils
 
 
 class Rectangle(object):
@@ -19,11 +18,13 @@ class Rectangle(object):
         height (Number): The height of the rectangle.
     """
 
-    def __init__(self, width: Number, height: Number) -> None:
+    def __init__(
+        self, width: rectangle_utils.Number, height: rectangle_utils.Number
+    ) -> None:
         self.width = width
         self.height = height
 
-    def get_area(self) -> Number:
+    def get_area(self) -> rectangle_utils.Number:
         """Returns the area of the rectangle.
 
         It calculates the area of the rectangle by multiplying the width and height of the rectangle.
@@ -31,10 +32,10 @@ class Rectangle(object):
         Returns:
             Number: The area of the rectangle.
         """
-        area = calculator.mul_two(self.width, self.height)
+        area = rectangle_utils.mul_two(self.width, self.height)
         return area
 
-    def get_perimeter(self) -> Number:
+    def get_perimeter(self) -> rectangle_utils.Number:
         """Returns the perimeter of the rectangle.
 
         It calculates the perimeter of the rectangle by adding the width and height of the rectangle and multiplying it by two.
@@ -42,6 +43,6 @@ class Rectangle(object):
         Returns:
             Number: The perimeter of the rectangle.
         """
-        half_perimeter = calculator.add_two(self.width, self.height)
-        perimeter = calculator.mul_two(half_perimeter, 2)
+        half_perimeter = rectangle_utils.add_two(self.width, self.height)
+        perimeter = rectangle_utils.mul_two(half_perimeter, 2)
         return perimeter

@@ -10,9 +10,9 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "fcpp" # The thing used in `pip install name` to install your package
+name = "rpyutils" # The thing used in `pip install name` to install your package
 version = "0.0.1"
-description = "Explore the world of rectangles"
+description = "My General Utils"
 readme = "README.md"
 authors = [{ name = "Reza", email = "re.esfandiarpoor@gmail.com" }]
 license = { file = "LICENSE" }
@@ -21,20 +21,20 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
 ]
-keywords = ["rectangle", "template", "tutorial"]
+keywords = ["utils", "misc"]
 dependencies = ["rich >= 12.0.0"]
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 
 
-# This is the thing that you do 'pip install fcpp[dev]' like 'pymongo[srv]'
+# This is the thing that you do 'pip install rpyutils[dev]' like 'pymongo[srv]'
 # You can have multiple of these
 [project.optional-dependencies]
 dev = ["black", "isort", "sphinx", "furo", "sphinx_rtd_theme"]
 
 [project.urls]
-Homepage = "https://github.com/Reza-esfandiarpoor/formal-complete-p-package"
-Documentation = "https://readthedocs.org/something-something-something"
+Homepage = "https://github.com/Reza-esfandiarpoor/rpyutils"
+Documentation = "https://docs.example.com"
 
 
 [project.scripts]
-fcppcli = "fcpp.__main__:main" # fcppcli is the name of the command used from cli
+rpyutils = "rpyutils.__main__:main" # fcppcli is the name of the command used from cli
