@@ -1,0 +1,5 @@
+{
+    "main": "black",
+    "warning": "red",
+    "pass": "green"
+}

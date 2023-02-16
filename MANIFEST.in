@@ -1,0 +1,6 @@
+# include all files matching the pattern
+include src/fcpp/config/**/*.json
+include src/fcpp/config/*.json
+
+# include all files under the specific directory
+# graft src/fcpp/config
