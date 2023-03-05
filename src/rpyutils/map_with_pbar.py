@@ -1,54 +1,70 @@
 import multiprocessing as mp
+import os
 import time
 
 from tqdm import tqdm as local_tqdm
 
 
-def init_pool_processes(shared_value):
-    global g_counter
-    g_counter = shared_value
+def init_pool_processes(args):
+    global counter_list
+    global counter_index
+    counter_list = args["counter_list"]
+    counter_index = args["index_queue"].get()
 
 
-def pbar(total, counter_var):
+def pbar(total, counter_var_list, update_interval=0.5):
     prev = 0
     pbar = local_tqdm(total=total)
     while True:
-        new = counter_var.value
+        new = 0
+        for counter_var in counter_var_list:
+            counter_value = counter_var.value
+            new += counter_value
         pbar.update(new - prev)
         prev = new
-        if prev == total:
+        if prev >= total:
             break
-        time.sleep(0.5)
+        time.sleep(update_interval)
     pbar.close()
 
 
 def worker(args):
-
-    func, func_args = args
+    func = args["func"]
+    func_args = args["args"]
 
     if isinstance(func_args, dict):
         output = func(**func_args)
     else:
         output = func(*func_args)
 
-    with g_counter.get_lock():
-        g_counter.value += 1
+    with counter_list[counter_index].get_lock():
+        counter_list[counter_index].value += 1
 
     return output
 
 
-def map_tqdm(func, args, pool_size=8):
+def map_tqdm(func, args, pool_size=None, update_interval=0.5):
+    if pool_size is None:
+        pool_size = os.cpu_count()
 
-    shared_counter = mp.Value("q", 0)
+    shared_counter_list = [mp.Value("q", 0) for _ in range(pool_size)]
 
-    args_with_func = [(func, arg_) for arg_ in args]
+    init_queue = mp.Queue()
+    for sc in range(pool_size):
+        init_queue.put(sc)
 
-    p = mp.Process(target=pbar, args=(len(args_with_func), shared_counter))
+    args_with_func = [{"func": func, "args": arg_} for arg_ in args]
+
+    p = mp.Process(
+        target=pbar, args=(len(args_with_func), shared_counter_list, update_interval)
+    )
     p.daemon = True
     p.start()
 
     with mp.Pool(
-        processes=pool_size, initializer=init_pool_processes, initargs=(shared_counter,)
+        processes=pool_size,
+        initializer=init_pool_processes,
+        initargs=({"index_queue": init_queue, "counter_list": shared_counter_list},),
     ) as pool:
         out_list = pool.map(worker, args_with_func)
 
@@ -65,5 +81,6 @@ def map_tqdm(func, args, pool_size=8):
 # if __name__ == "__main__":
 #
 #     arg_list = [(1,) for _ in range(80)]
-#     o = mp_map_tqdm(test_func, arg_list, pool_size=8)
+#     o = map_tqdm(test_func, arg_list, pool_size=8)
 #     print(len(o))
+#
