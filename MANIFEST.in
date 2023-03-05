@@ -1,7 +1,7 @@
 # include all files matching the pattern
 # include src/fcpp/config/**/*.json
 # include src/fcpp/config/*.json
-include src/rpyutils/**/*.json
+include src/rpyutils/random_words/data_files/*.json
 
 # include all files under the specific directory
 # graft src/fcpp/config
