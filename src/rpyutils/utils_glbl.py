@@ -8,7 +8,7 @@ import pickle as pkl
 from pathlib import Path
 
 
-def load_json(path, **kwargs):
+def read_json(path, **kwargs):
     with open(path, "r") as f:
         obj = json.load(f, **kwargs)
     return obj
@@ -39,7 +39,7 @@ def write_json_lines(obj_list, path, **kwargs):
         f.write(file_content)
 
 
-def load_pickle(path, **kwargs):
+def read_pickle(path, **kwargs):
     with open(path, "rb") as f:
         obj = pkl.load(f, **kwargs)
     return obj
