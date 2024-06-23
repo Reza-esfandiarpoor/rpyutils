@@ -7,6 +7,8 @@ import json
 import pickle as pkl
 from pathlib import Path
 
+import psutil
+
 
 def read_json(path, **kwargs):
     with open(path, "r") as f:
@@ -50,3 +52,26 @@ def write_pickle(obj, path, **kwargs):
     path.parent.mkdir(exist_ok=True, parents=True)
     with open(path, "wb") as f:
         pkl.dump(obj, f, **kwargs)
+
+
+def sizeof_fmt(num, suffix="B"):
+    for unit in ("", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"):
+        if abs(num) < 1024.0:
+            return f"{num:3.1f} {unit}{suffix}"
+        num /= 1024.0
+    return f"{num:.1f} Yi{suffix}"
+
+
+def r_used_mem(msg=None, echo=True, echo_bytes=False):
+    process = psutil.Process()
+    mem_bytes = process.memory_info().rss
+    if not echo:
+        return mem_bytes
+
+    str_size = f"{mem_bytes}"
+    if not echo_bytes:
+        str_size = sizeof_fmt(mem_bytes)
+
+    if msg is not None:
+        str_size = msg + ": " + str_size
+    print(str_size)

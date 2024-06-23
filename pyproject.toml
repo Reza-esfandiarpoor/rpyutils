@@ -5,7 +5,7 @@ line-length = 88
 profile = "black"
 
 [build-system]
-requires = ["setuptools>=61.0.0", "wheel"]
+requires = ["setuptools>=61.0.0", "wheel", "psutil"]
 build-backend = "setuptools.build_meta"
 
 
