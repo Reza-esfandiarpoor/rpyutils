@@ -62,7 +62,7 @@ def sizeof_fmt(num, suffix="B"):
     return f"{num:.1f} Yi{suffix}"
 
 
-def r_used_mem(msg=None, echo=True, echo_bytes=False):
+def used_mem(msg=None, echo=True, echo_bytes=False):
     process = psutil.Process()
     mem_bytes = process.memory_info().rss
     if not echo:
