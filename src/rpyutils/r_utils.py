@@ -3,11 +3,13 @@
 Generic utility functions
 """
 
+import inspect
 import json
 import pickle as pkl
 from pathlib import Path
 
 import psutil
+import pyrootutils
 
 
 def read_json(path, **kwargs):
@@ -75,3 +77,34 @@ def used_mem(msg=None, echo=True, echo_bytes=False):
     if msg is not None:
         str_size = msg + ": " + str_size
     print(str_size)
+
+
+def get_relative_file_path(path):
+    try:
+        root = Path(pyrootutils.find_root())
+    except FileNotFoundError:
+        root = Path.cwd()
+
+    path = Path(path)
+    try:
+        rel_path = path.relative_to(root)
+    except ValueError:
+        rel_path = path
+    rel_path_str = rel_path.as_posix()
+    return rel_path_str
+
+
+def current_file_and_line():
+    frame_info_list = inspect.getouterframes(inspect.currentframe())
+    if len(frame_info_list) > 1:
+        frame_info = frame_info_list[1]
+    else:
+        frame_info = frame_info_list[0]
+
+    filename = frame_info.filename
+    lineno = frame_info.lineno
+    rel_filename = get_relative_file_path(filename)
+
+    print(f"{rel_filename}: {lineno}")
+
+    return (rel_filename, lineno)
