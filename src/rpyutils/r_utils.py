@@ -1,4 +1,4 @@
-"""Utils to be imported globally with star
+"""Simple python utilities that are used often
 
 Generic utility functions
 """
