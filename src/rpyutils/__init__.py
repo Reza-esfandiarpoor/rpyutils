@@ -1,4 +1,4 @@
-__version__ = "0.0.1"
+__version__ = "0.0.3"
 
 from .map_with_pbar import map_tqdm
 

@@ -1,13 +1,9 @@
-
-
 import json
 import random
 import string
 from pathlib import Path
 
-__version__ = "0.0.1"
-
-pardir = Path(__file__).parent.joinpath('data_files')
+pardir = Path(__file__).parent.joinpath("data_files")
 
 with pardir.joinpath("names.json").open("r") as f:
     NAMES = json.load(f)
