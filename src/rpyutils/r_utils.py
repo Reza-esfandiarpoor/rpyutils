@@ -1,4 +1,4 @@
-"""Simple python utilities that are used often.
+"""Simple python utilities that are used often
 
 Generic utility functions
 """
