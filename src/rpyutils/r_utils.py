@@ -10,6 +10,7 @@ from pathlib import Path
 
 import psutil
 import pyrootutils
+from tqdm import tqdm
 
 
 def read_json(path, **kwargs):
@@ -72,7 +73,7 @@ def used_mem(msg=None, echo=True, echo_bytes=False):
 
     str_size = f"{mem_bytes}"
     if not echo_bytes:
-        str_size = sizeof_fmt(mem_bytes)
+        str_size = tqdm.format_sizeof(mem_bytes, suffix="B", divisor=1024)
 
     if msg is not None:
         str_size = msg + ": " + str_size
