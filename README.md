@@ -7,6 +7,8 @@ A simple python project to learn and collect best practices for python package d
 
 See [Docs](https://dochosting.gitlab.io/shadowfcpp/) for details.
 
+Installation: `pip install -U git+ssh://git@github.com/Reza-esfandiarpoor/rpyutils.git`
+
 ## TODO
 
 - [ ] ~~[How to Publish an Open-Source Python Package to PyPI](https://realpython.com/pypi-publish-python-package/#get-to-know-python-packaging)~~
