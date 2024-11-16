@@ -6,7 +6,10 @@ Generic utility functions
 import inspect
 import json
 import pickle as pkl
+import time
+from contextlib import contextmanager
 from pathlib import Path
+from typing import Optional
 
 import psutil
 import pyrootutils
@@ -78,6 +81,21 @@ def used_mem(msg=None, echo=True, echo_bytes=False):
     if msg is not None:
         str_size = msg + ": " + str_size
     print(str_size)
+
+
+@contextmanager
+def timer(msg: Optional[str] = "Elapsed Time"):
+    start = time.perf_counter()
+    yield
+    end = time.perf_counter()
+    elapsed = end - start
+    if elapsed < 1:
+        t_fmt = f"{elapsed:.4f}"
+    else:
+        t_fmt = tqdm.format_interval(elapsed)
+    if msg is not None:
+        t_fmt = f"{msg}: {t_fmt}"
+    print(t_fmt)
 
 
 def get_relative_file_path(path):
