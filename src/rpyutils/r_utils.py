@@ -98,6 +98,27 @@ def timer(msg: Optional[str] = "Elapsed Time"):
     print(t_fmt)
 
 
+def format_bytes(
+    num_bytes: int, msg: Optional[str] = None, echo: bool = True
+) -> Optional[str]:
+    """Format bytes into human readable units.
+
+    Args:
+        num_bytes: number of bytes to format with proper unit.
+        msg: preffix result with this message.
+        echo: if True, print the result. If False, return the result.
+
+    Returns: number of bytes in human readable format.
+    """
+    s_fmt = tqdm.format_sizeof(num_bytes, suffix="B", divisor=1024)
+    if msg is not None:
+        s_fmt = f"{msg}: {s_fmt}"
+    if echo:
+        print(s_fmt)
+    else:
+        return s_fmt
+
+
 def get_relative_file_path(path):
     try:
         root = Path(pyrootutils.find_root())

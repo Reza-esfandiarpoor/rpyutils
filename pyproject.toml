@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rpyutils" # The thing used in `pip install name` to install your package
-version = "0.1.0"
+version = "0.1.1"
 description = "My General Utils"
 readme = "README.md"
 authors = [{ name = "Reza", email = "re.esfandiarpoor@gmail.com" }]
