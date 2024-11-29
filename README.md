@@ -10,7 +10,7 @@ See [Docs](https://dochosting.gitlab.io/shadowfcpp/) for details.
 # Installation
 
 ```bash
-pip install -U git+ssh://git@github.com/Reza-esfandiarpoor/rpyutils.git`
+pip install -U git+ssh://git@github.com/Reza-esfandiarpoor/rpyutils.git
 ```
 
 ## TODO
