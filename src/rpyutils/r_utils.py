@@ -9,7 +9,7 @@ import pickle as pkl
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional, Union
 
 import psutil
 import pyrootutils
@@ -148,3 +148,38 @@ def current_file_and_line():
     print(f"{rel_filename}: {lineno}")
 
     return (rel_filename, lineno)
+
+
+def make_script_section_title(
+    title: str, width: int = 100, fill_char: str = "#", output: str = "echo"
+) -> Optional[Union[List[str], str]]:
+    """Make a section title for simple scripts.
+
+    Args:
+        title: The text content of the title
+        width: the width of title string
+        fill_char: character to fill the width of the title and also draw two lines before and after the title.
+        output: what to do with the output:
+            - 'echo': print the title
+            - 'return': return the title as a string
+            - 'return_line': return a list of lines that make up the title
+
+    Returns: None or the created title depending on the value of `output` argument.
+    """
+    assert output in ["return", "return_lines", "echo"]
+    lines = list()
+    lines.append("#" * width)
+    lines.append("#" * width)
+    lines.append("{:{}^{}s}".format(f" {title} ", fill_char, width))
+    lines.append("#" * width)
+    lines.append("#" * width)
+    if output == "echo":
+        title_fmt = "\n".join(lines)
+        print(title_fmt)
+    elif output == "return":
+        title_fmt = "\n".join(lines)
+        return title_fmt
+    elif output == "return_lines":
+        return lines
+    else:
+        raise ValueError
