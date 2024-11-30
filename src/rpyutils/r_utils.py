@@ -10,7 +10,8 @@ import pickle as pkl
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Iterable, List, Optional, Union
+from subprocess import CalledProcessError, run
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 import psutil
 import pyrootutils
@@ -248,3 +249,133 @@ def make_script_section_title(
         return lines
     else:
         raise ValueError
+
+
+def count_file_lines(path: os.PathLike) -> int:
+    """Count number of lines in file using linux 'wc -l' command."""
+    if not Path(path).exists():
+        msg = f"Path does not exists: '{path}'"
+        raise RuntimeError(msg)
+    path = Path(path).absolute().resolve().as_posix()
+    cmd_str = f"wc -l '{path}'"
+    try:
+        cmd_output = run(
+            cmd_str, shell=True, capture_output=True, text=True, check=True
+        )
+    except CalledProcessError as e:
+        print("---")
+        print("Command stdout")
+        print(e.stdout)
+        print("Command stderr")
+        print(e.stderr)
+        print("---")
+        raise e
+    output = cmd_output.stdout
+    # wc output is 'NUM_LINES FILENAME'. parse it to get num lines.
+    num_lines = int(output.split(" ")[0])
+    return num_lines
+
+
+def _head_and_tail(
+    cmd: str,
+    path: os.PathLike,
+    lines: Optional[int] = None,
+    shell_opts: Optional[str] = None,
+) -> List[str]:
+    """Run head and tail commands on a file. See docstring for user facing commands for details on arguments."""
+    if lines is None and shell_opts is None:
+        msg = (
+            "If you do not specify lines, you must specify the equivalent through 'shell_opts' argument."
+            " Both are passed a value of 'None'."
+        )
+        raise ValueError(msg)
+    if not Path(path).exists():
+        msg = f"Path does not exists: '{path}'"
+        raise RuntimeError(msg)
+
+    path = Path(path).absolute().resolve().as_posix()
+    cmd_str = cmd.strip()
+    if lines is not None:
+        cmd_str += f" -n {lines}"
+    if shell_opts is not None:
+        cmd_str += f" {shell_opts}"
+    cmd_str += f" '{path}'"
+    try:
+        cmd_output = run(
+            cmd_str, shell=True, capture_output=True, text=True, check=True
+        )
+    except CalledProcessError as e:
+        print("---")
+        print("Command stdout")
+        print(e.stdout)
+        print("Command stderr")
+        print(e.stderr)
+        print("---")
+        raise e
+    output = cmd_output.stdout
+    if output.strip() == "":
+        return []
+    lines = output.strip().split("\n")
+    return lines
+
+
+def head(
+    path: os.PathLike, lines: Optional[int] = None, shell_opts: Optional[str] = None
+) -> List[str]:
+    """Run linux 'head' command on file.
+
+    the command that will be run is like this: `head -n $LINES $SHELL_OPTS $path`
+    arguments that are `None` are not added to the final command.
+
+
+    Args:
+        path: to to to pass to 'head' as an argument.
+        lines: number of lines to show.
+        shell_opts: string to concat to the shell command being executed.
+
+    Returns: list of lines.
+    """
+    return _head_and_tail(cmd="head", path=path, lines=lines, shell_opts=shell_opts)
+
+
+def tail(
+    path: os.PathLike, lines: Optional[int] = None, shell_opts: Optional[str] = None
+) -> List[str]:
+    """Run linux 'tail' command on file.
+
+    the command that will be run is like this: `tail -n $LINES $SHELL_OPTS $path`
+    arguments that are `None` are not added to the final command.
+
+
+    Args:
+        path: to to to pass to 'tail' as an argument.
+        lines: number of lines to show.
+        shell_opts: string to concat to the shell command being executed.
+
+    Returns: list of lines.
+    """
+    return _head_and_tail(cmd="tail", path=path, lines=lines, shell_opts=shell_opts)
+
+
+def head_json_lines(
+    path: os.PathLike, lines: Optional[int] = None, shell_opts: Optional[str] = None
+) -> List[Dict]:
+    """Run linux head command on file and parse the output lines as json objects.
+
+    see docs for `head()` function for details.
+    """
+    lines = head(path=path, lines=lines, shell_opts=shell_opts)
+    objs = [json.loads(l) for l in lines]
+    return objs
+
+
+def tail_json_lines(
+    path: os.PathLike, lines: Optional[int] = None, shell_opts: Optional[str] = None
+) -> List[Dict]:
+    """Run linux tail command on file and parse the output lines as json objects.
+
+    see docs for `tail()` function for details.
+    """
+    lines = tail(path=path, lines=lines, shell_opts=shell_opts)
+    objs = [json.loads(l) for l in lines]
+    return objs
