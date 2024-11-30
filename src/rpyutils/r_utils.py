@@ -5,15 +5,72 @@ Generic utility functions
 
 import inspect
 import json
+import os
 import pickle as pkl
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Any, Iterable, List, Optional, Union
 
 import psutil
 import pyrootutils
 from tqdm import tqdm
+
+
+class JSONLinesWriter:
+    def __init__(
+        self, path: os.PathLike, chunk_size: Optional[int] = None, **kwargs
+    ) -> None:
+        """Open a json lines file for writing.
+
+        Example:
+            >>> with JSONLinesWriter('/path/to/file.jsonl') as writer:
+            ...     writer.add([{'a': 1}, {'b': 2}])
+            ...     writer.add_one({'c': 3})
+
+        Args:
+            path: file to open.
+            chunk_size: flush the buffer every 'chunk_size' records.
+            **kwargs: keyword arguments passed to 'json.dumps()'
+        """
+        Path(path).parent.mkdir(exist_ok=True, parents=True)
+        self.fp = open(path, "w")
+        self.json_kw = kwargs
+        if chunk_size is None:
+            self.chunk_size = 1_000
+        else:
+            self.chunk_size = chunk_size
+        self.line_buffer = list()
+
+    def __enter__(self):
+        """Act as a context manager."""
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        """Cleanups before exiting the context."""
+        self.close()
+
+    def add(self, items: Iterable[Any]) -> None:
+        """Write a list () of objects to file."""
+        for item in items:
+            self.line_buffer.append(json.dumps(item, **self.json_kw))
+            if len(self.line_buffer) >= self.chunk_size:
+                self.flush()
+
+    def add_one(self, item: Any) -> None:
+        """Write one object to file."""
+        self.add([item])
+
+    def flush(self) -> None:
+        """Flush the content of the buffer to file."""
+        if len(self.line_buffer) != 0:
+            self.fp.write("\n".join(self.line_buffer) + "\n")
+            self.line_buffer = list()
+
+    def close(self) -> None:
+        """Flush the buffer and close the file."""
+        self.flush()
+        self.fp.close()
 
 
 def read_json(path, **kwargs):
@@ -30,21 +87,29 @@ def write_json(obj, path, **kwargs):
 
 
 def read_json_lines(path, **kwargs):
+    obj_list = list()
     with open(path, "r") as f:
-        lines = f.readlines()
-    obj_list = [
-        json.loads(line.strip(), **kwargs) for line in lines if line.strip() != ""
-    ]
+        for line in tqdm(f, desc="read json lines from disk."):
+            if line.strip() == "":
+                continue
+            obj_list.append(json.loads(line.strip(), **kwargs))
     return obj_list
 
 
 def write_json_lines(obj_list, path, **kwargs):
     path = Path(path)
     path.parent.mkdir(exist_ok=True, parents=True)
-    line_list = [json.dumps(item, **kwargs) for item in obj_list]
-    file_content = "\n".join(line_list)
+    line_buffer = list()
+    chunk_size = 1_000
     with open(path, "w") as f:
-        f.write(file_content)
+        for obj in tqdm(obj_list, desc="Writer Json Lines Records"):
+            line_buffer.append(json.dumps(obj, **kwargs))
+            if len(line_buffer) >= chunk_size:
+                f.write("\n".join(line_buffer) + "\n")
+                line_buffer = []
+        if len(line_buffer):
+            f.write("\n".join(line_buffer) + "\n")
+            line_buffer = []
 
 
 def read_pickle(path, **kwargs):
