@@ -320,7 +320,7 @@ def _head_and_tail(
 
 
 def head(
-    path: os.PathLike, lines: Optional[int] = None, shell_opts: Optional[str] = None
+    path: os.PathLike, lines: Optional[int] = 1, shell_opts: Optional[str] = None
 ) -> List[str]:
     """Run linux 'head' command on file.
 
@@ -339,7 +339,7 @@ def head(
 
 
 def tail(
-    path: os.PathLike, lines: Optional[int] = None, shell_opts: Optional[str] = None
+    path: os.PathLike, lines: Optional[int] = 1, shell_opts: Optional[str] = None
 ) -> List[str]:
     """Run linux 'tail' command on file.
 
@@ -358,7 +358,7 @@ def tail(
 
 
 def head_json_lines(
-    path: os.PathLike, lines: Optional[int] = None, shell_opts: Optional[str] = None
+    path: os.PathLike, lines: Optional[int] = 1, shell_opts: Optional[str] = None
 ) -> List[Dict]:
     """Run linux head command on file and parse the output lines as json objects.
 
@@ -370,7 +370,7 @@ def head_json_lines(
 
 
 def tail_json_lines(
-    path: os.PathLike, lines: Optional[int] = None, shell_opts: Optional[str] = None
+    path: os.PathLike, lines: Optional[int] = 1, shell_opts: Optional[str] = None
 ) -> List[Dict]:
     """Run linux tail command on file and parse the output lines as json objects.
 
