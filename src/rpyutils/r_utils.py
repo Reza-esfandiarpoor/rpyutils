@@ -383,5 +383,5 @@ def tail_json_lines(
 
 def echo_rule(char="-") -> None:
     """Draw a line filling the width of the terminal using the given character."""
-    rule = char * os.terminal_size().columns
+    rule = char * os.get_terminal_size().columns
     print(rule)
