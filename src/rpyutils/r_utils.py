@@ -257,10 +257,10 @@ def count_file_lines(path: os.PathLike) -> int:
         msg = f"Path does not exists: '{path}'"
         raise RuntimeError(msg)
     path = Path(path).absolute().resolve().as_posix()
-    cmd_str = f"wc -l '{path}'"
+    cmd_str = ["wc", "-l", path]
     try:
         cmd_output = run(
-            cmd_str, shell=True, capture_output=True, text=True, check=True
+            cmd_str, shell=False, capture_output=True, text=True, check=True
         )
     except CalledProcessError as e:
         print("---")
@@ -385,3 +385,57 @@ def echo_rule(char="-") -> None:
     """Draw a line filling the width of the terminal using the given character."""
     rule = char * os.get_terminal_size().columns
     print(rule)
+
+
+def head_dict_keys(obj: Dict, n: int = 1) -> List:
+    "Return the first n dict keys."
+    data = list()
+    data_iter = iter(obj.keys())
+    for _ in range(min(n, len(obj))):
+        data.append(next(data_iter))
+    return data
+
+
+def head_dict_values(obj: Dict, n: int = 1) -> List:
+    "Return the first n dict values."
+    data = list()
+    data_iter = iter(obj.values())
+    for _ in range(min(n, len(obj))):
+        data.append(next(data_iter))
+    return data
+
+
+def head_dict_items(obj: Dict, n: int = 1) -> List:
+    "Return the first n dict items."
+    data = list()
+    data_iter = iter(obj.items())
+    for _ in range(min(n, len(obj))):
+        data.append(next(data_iter))
+    return data
+
+
+def tail_dict_keys(obj: Dict, n: int = 1) -> List:
+    "Return the last n dict keys."
+    data = list()
+    data_iter = iter(reversed(list(obj.keys())))
+    for _ in range(min(n, len(obj))):
+        data.append(next(data_iter))
+    return data
+
+
+def tail_dict_values(obj: Dict, n: int = 1) -> List:
+    "Return the last n dict values."
+    data = list()
+    data_iter = iter(reversed(list(obj.values())))
+    for _ in range(min(n, len(obj))):
+        data.append(next(data_iter))
+    return data
+
+
+def tail_dict_items(obj: Dict, n: int = 1) -> List:
+    "Return the last n dict items."
+    data = list()
+    data_iter = iter(reversed(list(obj.items())))
+    for _ in range(min(n, len(obj))):
+        data.append(next(data_iter))
+    return data
