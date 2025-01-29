@@ -23,6 +23,7 @@ def fancy_table(
     close: bool = False,
     html_escape=False,
     html_float_fmt="{:.2f}",
+    silent=False,
 ) -> Union[HTML, None]:
     """Displays the input with [jQuery DataTables](https://datatables.net).
 
@@ -42,6 +43,7 @@ def fancy_table(
         save (Union[bool, None], optional): Save the table in an html file. Can be True/False/None. Defaults to None.
             The table is saved to file if `(save == None and file != None) or save == True`
         close (bool, optional): if the detail tag should be closed initially. Defaults to False.
+        silent: If True, do not print info messages.
 
     Returns:
         Union[HTML, None]: The table either in an HTML object if show is True.
@@ -110,7 +112,8 @@ def fancy_table(
         path.parent.mkdir(exist_ok=True, parents=True)
         with path.open("wt", encoding="utf8") as f:
             f.write(main_html_code)
-        print(f"Saved to {path}")
+        if not silent:
+            print(f"Saved to {path}")
 
     if show:
         return iframe_html_utils.show_html(
