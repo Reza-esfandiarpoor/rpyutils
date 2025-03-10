@@ -14,7 +14,7 @@ name = "rpyutils" # The thing used in `pip install name` to install your package
 version = "0.1.4"
 description = "My General Utils"
 readme = "README.md"
-authors = [{ name = "Reza", email = "re.esfandiarpoor@gmail.com" }]
+authors = [{ name = "Reza", email = "example@gmail.com" }]
 license = { file = "LICENSE" }
 classifiers = [
   "License :: OSI Approved :: MIT License",
