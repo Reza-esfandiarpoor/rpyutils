@@ -13,8 +13,6 @@ from pathlib import Path
 from subprocess import CalledProcessError, run
 from typing import Any, Dict, Iterable, List, Optional, Union
 
-import psutil
-import pyrootutils
 from tqdm import tqdm
 
 
@@ -135,6 +133,7 @@ def sizeof_fmt(num, suffix="B"):
 
 
 def used_mem(msg=None, echo=True, echo_bytes=False):
+    import psutil
     process = psutil.Process()
     mem_bytes = process.memory_info().rss
     if not echo:
@@ -186,6 +185,7 @@ def format_bytes(
 
 
 def get_relative_file_path(path):
+    import pyrootutils
     try:
         root = Path(pyrootutils.find_root())
     except FileNotFoundError:
